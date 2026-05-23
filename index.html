@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Present Perfect – Dragon's Lair</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+<style>
+:root {
+  --parchment-bg:    #e8d9b5;
+  --parchment-mid:   #dfc fa0; /* fallback below */
+  --parchment-dark:  #c9b988;
+  --parchment-aged:  #b8a472;
+  --parchment-edge:  #a08a50;
+  --ink-black:       #1c1208;
+  --ink-dark:        #2e1e0a;
+  --ink-brown:       #4a3010;
+  --ink-mid:         #6b4820;
+  --ink-fade:        #8a6838;
+  --ink-faint:       #a88850;
+  --red-ink:         #7a1a08;
+  --red-ink-mid:     #a02810;
+  --teal-ink:        #1a4030;
+  --teal-ink-mid:    #285840;
+  --gold-leaf:       #8a6810;
+  --gold-leaf-mid:   #b08820;
+  --stain-dark:      rgba(80,50,10,0.15);
+  --stain-mid:       rgba(100,70,20,0.1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #6b5030;
+  font-family: 'IM Fell English', Georgia, serif;
+}
+
+/* ── App shell ── */
+.app {
+  display: flex;
+  min-height: 600px;
+  position: relative;
+  overflow: hidden;
+  /* Parchment base */
+  background-color: #e2cfa0;
+  background-image:
+    /* Grain/fiber texture via repeating gradients */
+    repeating-linear-gradient(
+      93deg,
+      transparent,
+      transparent 2px,
+      rgba(160,120,60,0.04) 2px,
+      rgba(160,120,60,0.04) 4px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      transparent,
+      transparent 3px,
+      rgba(140,100,40,0.03) 3px,
+      rgba(140,100,40,0.03) 5px
+    ),
+    /* Aged vignette */
+    radial-gradient(ellipse 110% 110% at 50% 50%, #e8d9b8 0%, #d4bf90 55%, #b8a060 100%);
+  color: var(--ink-dark);
+}
+
+/* Parchment wear — dark corners and edges */
+.app::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 0% 0%,   rgba(60,30,5,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 35% at 100% 0%,  rgba(60,30,5,0.18) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 40% at 0% 100%,  rgba(60,30,5,0.25) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 100%,rgba(60,30,5,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse 30% 20% at 30% 60%,  rgba(100,70,20,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 25% 15% at 75% 30%,  rgba(80,50,10,0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Parchment wear — ink stains/blotches */
+.app::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 8% 5% at 15% 40%,  rgba(80,50,10,0.08) 0%, transparent 100%),
+    radial-gradient(ellipse 5% 4% at 82% 70%,  rgba(80,50,10,0.07) 0%, transparent 100%),
+    radial-gradient(ellipse 6% 3% at 60% 20%,  rgba(80,50,10,0.05) 0%, transparent 100%),
+    radial-gradient(ellipse 4% 6% at 40% 85%,  rgba(80,50,10,0.06) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 188px;
+  background:
+    repeating-linear-gradient(92deg, transparent, transparent 3px, rgba(120,80,20,0.04) 3px, rgba(120,80,20,0.04) 5px),
+    linear-gradient(180deg, #d9c89a 0%, #cbb882 50%, #d4c090 100%);
+  border-right: 2px solid var(--parchment-aged);
+  padding: 0;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Worn right edge of sidebar */
+.sidebar::after {
+  content: '';
+  position: absolute;
+  top: 0; right: -1px; bottom: 0; width: 6px;
+  background: linear-gradient(90deg, rgba(80,50,10,0.12), transparent);
+  pointer-events: none;
+}
+
+.sidebar-header {
+  padding: 1.1rem 1rem 1rem;
+  border-bottom: 1px solid var(--parchment-aged);
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-label {
+  font-family: 'Cinzel', serif;
+  font-size: 8.5px;
+  color: var(--ink-brown);
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.sidebar-sub {
+  font-family: 'IM Fell English', serif;
+  font-size: 12px;
+  color: var(--ink-mid);
+  margin-top: 3px;
+  font-style: italic;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 1rem;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  background: transparent;
+  font-size: 13px;
+  font-family: 'IM Fell English', serif;
+  color: var(--ink-mid);
+  border-left: 2px solid transparent;
+  transition: all .2s;
+}
+
+.nav-btn.active {
+  background: rgba(80,50,10,0.1);
+  color: var(--ink-black);
+  font-weight: 600;
+  border-left: 2px solid var(--red-ink);
+}
+
+.nav-btn:hover:not(.active) {
+  background: rgba(80,50,10,0.06);
+  color: var(--ink-dark);
+}
+
+.nav-icon { font-size: 14px; }
+
+/* ── Main ── */
+.main {
+  flex: 1;
+  padding: 1.75rem 2.1rem;
+  overflow-y: auto;
+  max-height: 600px;
+  position: relative;
+  z-index: 1;
+}
+
+.main::-webkit-scrollbar { width: 6px; }
+.main::-webkit-scrollbar-track { background: rgba(120,80,20,0.1); }
+.main::-webkit-scrollbar-thumb { background: var(--parchment-aged); border-radius: 3px; }
+
+/* ── Typography ── */
+.section-heading {
+  font-family: 'Cinzel', serif;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--ink-black);
+  margin-bottom: 0.3rem;
+  letter-spacing: .03em;
+}
+
+.section-sub {
+  font-family: 'IM Fell English', serif;
+  font-size: 14px;
+  color: var(--ink-fade);
+  margin-bottom: 1.4rem;
+  font-style: italic;
+}
+
+/* ── Cards ── */
+.card {
+  background: rgba(255,245,220,0.45);
+  border: 1px solid var(--parchment-aged);
+  border-radius: 3px;
+  padding: 1.25rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 1px 1px 4px rgba(80,50,10,0.1);
+}
+
+.amber-card {
+  background: rgba(200,160,70,0.14);
+  border: 1px solid #b89850;
+  border-radius: 3px;
+  padding: 1.25rem;
+  box-shadow: inset 0 1px 0 rgba(255,240,200,0.5);
+}
+
+.coral-card {
+  background: rgba(160,50,20,0.07);
+  border: 1px solid #c07050;
+  border-radius: 3px;
+  padding: 1.25rem;
+}
+
+.teal-card {
+  background: rgba(20,80,50,0.08);
+  border: 1px solid #5a8870;
+  border-radius: 3px;
+  padding: 1.25rem;
+}
+
+/* ── Grid ── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+
+/* ── Tags ── */
+.tag {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 2px;
+  font-size: 11.5px;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+.tag-amber { background: rgba(160,110,20,0.15); color: var(--ink-brown);   border: 1px solid #b08030; }
+.tag-coral { background: rgba(140,40,10,0.1);   color: var(--red-ink);     border: 1px solid #b06040; }
+.tag-teal  { background: rgba(20,80,50,0.1);    color: var(--teal-ink);    border: 1px solid #4a7860; }
+.tag-blue  { background: rgba(20,50,100,0.08);  color: #2a3870;            border: 1px solid #5060a0; }
+
+/* ── Formula box ── */
+.formula-box {
+  background: rgba(210,180,100,0.2);
+  border: 1.5px solid var(--parchment-aged);
+  border-radius: 3px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: inset 0 0 30px rgba(160,110,30,0.1), 2px 2px 6px rgba(80,50,10,0.12);
+  position: relative;
+}
+
+/* Decorative corner flourishes */
+.formula-box::before, .formula-box::after {
+  font-family: 'IM Fell English', serif;
+  font-size: 22px;
+  color: var(--ink-faint);
+  position: absolute;
+  line-height: 1;
+}
+.formula-box::before { content: '❧'; top: 8px; left: 12px; }
+.formula-box::after  { content: '❧'; bottom: 8px; right: 12px; transform: scaleX(-1) scaleY(-1); }
+
+.formula-part {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 2px;
+  margin: 0 4px;
+  font-size: 13px;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+.part-amber { background: rgba(160,110,20,0.2); color: var(--ink-brown);  border: 1px solid #a07828; }
+.part-gray  { background: rgba(80,50,10,0.08);  color: var(--ink-dark);   border: 1px solid var(--parchment-aged); }
+.part-coral { background: rgba(130,30,10,0.12); color: var(--red-ink);    border: 1px solid #9a3820; }
+
+/* ── Bubbles ── */
+.example-bubble {
+  border-radius: 3px;
+  padding: .7rem 1rem;
+  margin-bottom: .7rem;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.bubble-q   { background: rgba(160,110,20,0.1);  color: var(--ink-dark);   border: 1px solid #c09840; border-radius: 12px 12px 12px 3px; }
+.bubble-yes { background: rgba(20,80,50,0.08);    color: var(--teal-ink);   border: 1px solid #5a8870; border-radius: 12px 12px 3px 12px; }
+.bubble-no  { background: rgba(140,40,10,0.07);   color: var(--red-ink);    border: 1px solid #b06040; border-radius: 12px 12px 3px 12px; }
+
+/* ── Quiz options ── */
+.opt-btn {
+  width: 100%;
+  padding: .7rem 1rem;
+  margin-bottom: .55rem;
+  border: 1px solid var(--parchment-aged);
+  border-radius: 2px;
+  background: rgba(255,245,220,0.5);
+  font-size: 14px;
+  font-family: 'IM Fell English', serif;
+  color: var(--ink-dark);
+  cursor: pointer;
+  text-align: left;
+  transition: all .15s;
+  box-shadow: 1px 1px 3px rgba(80,50,10,0.08);
+}
+
+.opt-btn:hover:not(:disabled) {
+  background: rgba(200,160,70,0.18);
+  border-color: var(--parchment-edge);
+  color: var(--ink-black);
+}
+
+.opt-btn.selected {
+  background: rgba(160,110,20,0.15);
+  border-color: #b08030;
+  color: var(--ink-black);
+}
+
+.opt-btn.correct {
+  background: rgba(20,80,50,0.1);
+  border-color: var(--teal-ink-mid);
+  color: var(--teal-ink);
+  font-style: italic;
+}
+
+.opt-btn.wrong {
+  background: rgba(140,40,10,0.1);
+  border-color: var(--red-ink-mid);
+  color: var(--red-ink);
+}
+
+.opt-btn:disabled { cursor: default; }
+
+/* ── Buttons ── */
+.primary-btn {
+  padding: .65rem 1.75rem;
+  background: linear-gradient(180deg, #c8a040 0%, #a07820 100%);
+  border: 1px solid #806010;
+  border-radius: 2px;
+  color: #f8eecc;
+  font-family: 'Cinzel', serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  cursor: pointer;
+  transition: all .15s;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  box-shadow: 0 2px 5px rgba(80,50,10,0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+.primary-btn:hover {
+  background: linear-gradient(180deg, #d4aa48 0%, #b08828 100%);
+  box-shadow: 0 3px 8px rgba(80,50,10,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+  transform: translateY(-1px);
+}
+
+.primary-btn:disabled {
+  background: rgba(120,90,40,0.2);
+  border-color: var(--parchment-aged);
+  color: var(--ink-faint);
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+  text-shadow: none;
+}
+
+.ghost-btn {
+  padding: .65rem 1.75rem;
+  background: transparent;
+  border: 1px solid var(--parchment-aged);
+  border-radius: 2px;
+  color: var(--ink-mid);
+  font-family: 'Cinzel', serif;
+  font-size: 12.5px;
+  letter-spacing: .05em;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.ghost-btn:hover {
+  background: rgba(80,50,10,0.07);
+  border-color: var(--parchment-edge);
+  color: var(--ink-dark);
+}
+
+/* ── Progress bar ── */
+.progress-bar {
+  width: 100%;
+  height: 5px;
+  background: rgba(80,50,10,0.12);
+  border-radius: 0;
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+  border: 1px solid var(--parchment-aged);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8a6010, #c09030);
+  transition: width .4s ease;
+}
+
+/* ── Explanation box ── */
+.exp-box {
+  background: rgba(20,80,50,0.08);
+  border: 1px solid #5a7860;
+  border-radius: 2px;
+  padding: .75rem 1rem;
+  font-size: 13px;
+  color: var(--teal-ink);
+  margin-top: .75rem;
+  font-style: italic;
+}
+
+/* ── Score ring ── */
+.score-big {
+  font-family: 'Cinzel', serif;
+  font-size: 56px;
+  font-weight: 600;
+  color: var(--ink-black);
+  line-height: 1;
+}
+
+.score-ring {
+  width: 148px;
+  height: 148px;
+  border-radius: 50%;
+  border: 3px solid var(--parchment-edge);
+  box-shadow: 0 0 0 6px rgba(160,110,20,0.1), 2px 2px 10px rgba(80,50,10,0.2);
+  background: radial-gradient(circle, rgba(240,225,190,0.7) 0%, rgba(200,170,110,0.4) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0 auto 1.5rem;
+}
+
+/* ── Dragon banner ── */
+.dragon-banner {
+  background:
+    repeating-linear-gradient(91deg, transparent, transparent 4px, rgba(120,80,20,0.03) 4px, rgba(120,80,20,0.03) 6px),
+    linear-gradient(160deg, #dcc888 0%, #cdb870 40%, #d4c080 100%);
+  border: 1.5px solid var(--parchment-aged);
+  border-radius: 3px;
+  padding: 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+  box-shadow: inset 0 0 30px rgba(160,120,40,0.15), 2px 2px 8px rgba(80,50,10,0.15);
+}
+
+/* Aged ink border lines top/bottom */
+.dragon-banner::before {
+  content: '— ✦ —';
+  position: absolute;
+  top: 8px; left: 0; right: 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: .2em;
+}
+.dragon-banner::after {
+  content: '— ✦ —';
+  position: absolute;
+  bottom: 8px; left: 0; right: 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: .2em;
+}
+
+/* ── Verb table ── */
+.verb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-family: 'IM Fell English', serif;
+}
+
+.verb-table th {
+  background: rgba(160,110,20,0.18);
+  color: var(--ink-black);
+  padding: 7px 12px;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: .07em;
+  text-align: left;
+  border: 1px solid var(--parchment-aged);
+}
+
+.verb-table td {
+  padding: 6px 12px;
+  border: 1px solid rgba(160,120,50,0.3);
+  color: var(--ink-dark);
+}
+
+.verb-table tr:nth-child(even) td { background: rgba(160,120,50,0.05); }
+
+/* ── Separator ── */
+.sep { height: 1px; background: var(--parchment-aged); margin: 1rem 0; }
+.sr-only { position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0); }
+
+/* ── Entrance ── */
+@keyframes inkFade {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+#main-content > * { animation: inkFade .28s ease both; }
+</style>
+</head>
+<body>
+
+<div id="app-root" class="app">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-label">Cambridge Global English</div>
+      <div class="sidebar-sub">Grade 3 · Unit 7.2</div>
+    </div>
+    <div id="nav"></div>
+  </div>
+  <div class="main" id="main-content"></div>
+</div>
+
+<script>
+const SECTIONS = [
+  {id:"intro",   icon:"🐉", label:"Dragon's Tale"},
+  {id:"formula", icon:"✨", label:"Magic Formula"},
+  {id:"when",    icon:"📜", label:"When to Use"},
+  {id:"examples",icon:"⚔️", label:"Adventure Time"},
+  {id:"quiz",    icon:"🏆", label:"Dragon's Challenge"}
+];
+
+const Q_BANK = [
+  {q:"She ___ climbed a mountain.",opts:["have","has","is","did"],ans:"has",exp:"Use 'has' with he / she / it."},
+  {q:"They ___ visited Paris before.",opts:["has","have","is","are"],ans:"have",exp:"Use 'have' with I / you / we / they."},
+  {q:"I ___ never eaten dragon fruit.",opts:["has","is","have","did"],ans:"have",exp:"Use 'have' with I."},
+  {q:"He ___ lived in this castle for 100 years.",opts:["have","is","has","did"],ans:"has",exp:"Use 'has' with he / she / it."},
+  {q:"We ___ seen a real dragon!",opts:["has","have","was","did"],ans:"have",exp:"Use 'have' with we."},
+  {q:"The dragon ___ slept on gold for centuries.",opts:["have","did","was","has"],ans:"has",exp:"'The dragon' = it, so use 'has'."},
+  {q:"Have you ever ___ (ride) a horse?",opts:["ride","rode","ridden","riding"],ans:"ridden",exp:"The past participle of 'ride' is 'ridden'."},
+  {q:"She has ___ (eat) dragon fruit before.",opts:["eat","ate","eating","eaten"],ans:"eaten",exp:"The past participle of 'eat' is 'eaten'."},
+  {q:"They have ___ (travel) to another country.",opts:["travel","travelled","travels","travelling"],ans:"travelled",exp:"The past participle of 'travel' is 'travelled'."},
+  {q:"I have ___ (see) a shooting star.",opts:["see","saw","seen","seeing"],ans:"seen",exp:"The past participle of 'see' is 'seen'."},
+  {q:"He has never ___ (fight) a dragon.",opts:["fight","fought","fighting","fighted"],ans:"fought",exp:"The past participle of 'fight' is 'fought'."},
+  {q:'"Have you ever climbed a mountain?" — "Yes, ___!"',opts:["I have","I has","I did","I am"],ans:"I have",exp:"Short answer: Yes, I have."},
+  {q:'"Has she ever touched a snake?" — "No, ___."',opts:["she hasn\'t","she haven\'t","she didn\'t","she isn\'t"],ans:"she hasn't",exp:"Short answer: No, she hasn't (= she has not)."},
+  {q:'"Have they ever been to Africa?" — "No, ___."',opts:["they hasn\'t","they haven\'t","they didn\'t","they aren\'t"],ans:"they haven't",exp:"Short answer: No, they haven't (= they have not)."},
+  {q:'"Has he ever won a race?" — "Yes, ___!"',opts:["he have","he has","he did","he is"],ans:"he has",exp:"Short answer: Yes, he has."},
+  {q:"Which sentence is correct?",opts:["I have ever been to China.","I have been to China.","I was ever been to China.","I has been to China."],ans:"I have been to China.",exp:"'Ever' is only used in questions. 'I have been' is correct present perfect."},
+  {q:"Which sentence is correct?",opts:["She has never saw a dragon.","She has never seen a dragon.","She never has seen a dragon.","She have never seen a dragon."],ans:"She has never seen a dragon.",exp:"Use has + past participle (seen). 'Never' goes between has and the participle."},
+  {q:"Which uses the present perfect correctly?",opts:["Yesterday I have eaten pizza.","I have eaten pizza before.","I eating pizza before.","I eated pizza before."],ans:"I have eaten pizza before.",exp:"Don't use present perfect with 'yesterday'. Use it for general experiences."},
+  {q:"Which sentence is correct?",opts:["Have you ever rode a camel?","Have you ever ridden a camel?","Did you ever ridden a camel?","Have you ever ride a camel?"],ans:"Have you ever ridden a camel?",exp:"Questions use: Have + subject + ever + past participle."},
+  {q:"What does 'I have never touched gold' mean?",opts:["I touched gold yesterday.","I will touch gold soon.","At no point in my life have I touched gold.","I am touching gold now."],ans:"At no point in my life have I touched gold.",exp:"'Never' in present perfect = at no point during someone's life experience."}
+];
+
+let currentSection=0,questions=[],qIndex=0,selected=null,confirmed=false,score=0,quizDone=false;
+function shuffle(arr){return[...arr].sort(()=>Math.random()-.5);}
+
+function renderNav(){
+  document.getElementById("nav").innerHTML=SECTIONS.map((s,i)=>`
+    <button class="nav-btn ${currentSection===i?"active":""}" onclick="goSection(${i})">
+      <span class="nav-icon">${s.icon}</span>${s.label}
+    </button>`).join("");
+}
+
+function goSection(i){
+  currentSection=i;
+  if(i===4)resetQuiz();
+  renderNav();renderMain();
+}
+
+function resetQuiz(){
+  questions=shuffle(Q_BANK).slice(0,20);
+  qIndex=0;selected=null;confirmed=false;score=0;quizDone=false;
+}
+
+function renderMain(){
+  const el=document.getElementById("main-content");
+  if(currentSection===0)el.innerHTML=renderIntro();
+  else if(currentSection===1)el.innerHTML=renderFormula();
+  else if(currentSection===2)el.innerHTML=renderWhen();
+  else if(currentSection===3)el.innerHTML=renderExamples();
+  else if(currentSection===4)el.innerHTML=quizDone?renderScore():renderQuiz();
+}
+
+function renderIntro(){return`
+  <h2 class="sr-only">Introduction – Dragon's Tale</h2>
+  <div class="dragon-banner" style="padding:2rem 1.5rem 1.75rem">
+    <div style="font-size:50px;margin-bottom:.5rem">🐉</div>
+    <div style="font-family:'Cinzel',serif;font-size:21px;font-weight:600;color:var(--ink-black);margin-bottom:.3rem;letter-spacing:.04em">The Present Perfect</div>
+    <div style="font-family:'IM Fell English',serif;font-size:14px;color:var(--ink-mid);font-style:italic">Unit 7.2 — Have you ever… ?</div>
+  </div>
+  <div class="card" style="margin-bottom:1rem">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <span style="font-size:24px">🏰</span>
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--ink-black);margin-bottom:.4rem;letter-spacing:.03em">What Are We Learning Today?</div>
+        <p style="font-size:15px;color:var(--ink-dark);line-height:1.75">We use the <strong>present perfect</strong> to talk about things we have (or haven't!) done at some point in our lives. It connects the <em>past</em> to the <em>present</em>.</p>
+      </div>
+    </div>
+  </div>
+  <div class="grid2" style="margin-bottom:1rem">
+    <div class="amber-card">
+      <div style="font-size:20px;margin-bottom:.4rem">✅</div>
+      <div style="font-family:'Cinzel',serif;font-size:11px;font-weight:600;color:var(--ink-brown);margin-bottom:.3rem;letter-spacing:.06em">EXPERIENCE</div>
+      <div style="font-size:14px;color:var(--ink-mid)">Something that happened (or never happened) in someone's life.</div>
+    </div>
+    <div class="coral-card">
+      <div style="font-size:20px;margin-bottom:.4rem">⏰</div>
+      <div style="font-family:'Cinzel',serif;font-size:11px;font-weight:600;color:var(--red-ink);margin-bottom:.3rem;letter-spacing:.06em">NO EXACT TIME</div>
+      <div style="font-size:14px;color:var(--ink-mid)">We don't say exactly when — just that it happened (or not).</div>
+    </div>
+  </div>
+  <div class="amber-card" style="margin-bottom:1.5rem">
+    <div style="font-family:'Cinzel',serif;font-size:11px;font-weight:600;color:var(--ink-brown);margin-bottom:.75rem;letter-spacing:.08em">🐉 FROM THE DRAGON'S LAIR</div>
+    <div style="font-size:15px;color:var(--ink-dark);font-style:italic;padding-left:.75rem;border-left:2px solid var(--gold-leaf);line-height:1.75">"Have you ever <strong>fought</strong> a dragon? No, I have never fought a dragon — but Bilbo Baggins <strong>has</strong>!"</div>
+  </div>
+  <button class="primary-btn" onclick="goSection(1)">Begin the Quest → ✨</button>`;}
+
+function renderFormula(){return`
+  <h2 class="sr-only">Present Perfect Formula</h2>
+  <div style="margin-bottom:1.25rem">
+    <div class="section-heading">✨ The Magic Formula</div>
+    <div class="section-sub">How to build a present perfect sentence</div>
+  </div>
+  <div class="formula-box" style="margin-bottom:1.25rem">
+    <div style="font-family:'Cinzel',serif;font-size:9.5px;color:var(--ink-fade);font-weight:600;margin-bottom:.9rem;letter-spacing:.14em;text-transform:uppercase">Positive Form</div>
+    <div style="font-size:15px;color:var(--ink-dark);line-height:2.8">
+      <span class="formula-part part-amber">Subject</span>
+      <span style="color:var(--ink-faint);font-size:13px"> + </span>
+      <span class="formula-part part-coral">have / has</span>
+      <span style="color:var(--ink-faint);font-size:13px"> + </span>
+      <span class="formula-part part-gray">past participle</span>
+    </div>
+  </div>
+  <div class="grid2" style="margin-bottom:1.25rem">
+    <div class="card">
+      <span class="tag tag-coral" style="margin-bottom:.75rem;display:inline-block">have</span>
+      <div style="font-size:13px;color:var(--ink-fade);margin-bottom:.5rem;font-style:italic">Use with: I, you, we, they</div>
+      <div style="font-size:14px;color:var(--ink-dark);line-height:1.8"><strong>I have</strong> climbed a mountain.<br><strong>We have</strong> seen a dragon.<br><strong>They have</strong> travelled far.</div>
+    </div>
+    <div class="card">
+      <span class="tag tag-amber" style="margin-bottom:.75rem;display:inline-block">has</span>
+      <div style="font-size:13px;color:var(--ink-fade);margin-bottom:.5rem;font-style:italic">Use with: he, she, it</div>
+      <div style="font-size:14px;color:var(--ink-dark);line-height:1.8"><strong>She has</strong> climbed a mountain.<br><strong>He has</strong> fought a dragon.<br><strong>It has</strong> been asleep for years.</div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div style="font-family:'Cinzel',serif;font-size:12.5px;font-weight:600;color:var(--ink-black);margin-bottom:.85rem;letter-spacing:.03em">Common Irregular Past Participles</div>
+    <table class="verb-table">
+      <tr><th>Base verb</th><th>Past participle</th><th>Base verb</th><th>Past participle</th></tr>
+      <tr><td>see</td><td><span class="tag tag-amber">seen</span></td><td>eat</td><td><span class="tag tag-amber">eaten</span></td></tr>
+      <tr><td>go</td><td><span class="tag tag-amber">gone / been</span></td><td>fight</td><td><span class="tag tag-amber">fought</span></td></tr>
+      <tr><td>ride</td><td><span class="tag tag-amber">ridden</span></td><td>win</td><td><span class="tag tag-amber">won</span></td></tr>
+      <tr><td>climb</td><td><span class="tag tag-teal">climbed</span></td><td>travel</td><td><span class="tag tag-teal">travelled</span></td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--ink-faint);margin-top:.5rem;font-style:italic">🟡 Irregular &nbsp;&nbsp; 🟢 Regular (-ed)</div>
+  </div>
+  <button class="primary-btn" onclick="goSection(2)">Next: When to Use → 📜</button>`;}
+
+function renderWhen(){return`
+  <h2 class="sr-only">When to use Present Perfect</h2>
+  <div style="margin-bottom:1.25rem">
+    <div class="section-heading">📜 When Do We Use It?</div>
+    <div class="section-sub">Three important uses of the present perfect</div>
+  </div>
+  <div class="card" style="margin-bottom:1rem">
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <span style="font-size:22px">🌍</span>
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:12.5px;font-weight:600;color:var(--ink-black);margin-bottom:.3rem;letter-spacing:.02em">1. Life Experiences (ever / never)</div>
+        <div style="font-size:13px;color:var(--ink-fade);margin-bottom:.5rem;font-style:italic">Something that happened at some point in your life. No exact time given.</div>
+        <div class="amber-card" style="font-size:14px;color:var(--ink-dark);padding:.75rem">
+          <span class="tag tag-coral" style="margin-right:6px">ever</span> <strong>Have</strong> you <em>ever</em> <strong>seen</strong> a lion?<br><br>
+          <span class="tag tag-coral" style="margin-right:6px">never</span> I have <em>never</em> <strong>touched</strong> an elephant.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1rem">
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <span style="font-size:22px">⏳</span>
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:12.5px;font-weight:600;color:var(--ink-black);margin-bottom:.3rem;letter-spacing:.02em">2. Ongoing Situations (for / since)</div>
+        <div style="font-size:13px;color:var(--ink-fade);margin-bottom:.5rem;font-style:italic">Something that started in the past and is still true now.</div>
+        <div class="amber-card" style="font-size:14px;color:var(--ink-dark);padding:.75rem">
+          I <strong>have lived</strong> here <em>for</em> 14 years. <span style="color:var(--ink-fade)">(I still live here!)</span><br><br>
+          The dragon <strong>has slept</strong> on gold <em>since</em> the year 1000.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <span style="font-size:22px">📰</span>
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:12.5px;font-weight:600;color:var(--ink-black);margin-bottom:.3rem;letter-spacing:.02em">3. Recent Events (just / lately / recently)</div>
+        <div style="font-size:13px;color:var(--ink-fade);margin-bottom:.5rem;font-style:italic">Something that happened recently — the exact time isn't important.</div>
+        <div class="amber-card" style="font-size:14px;color:var(--ink-dark);padding:.75rem">
+          The king <strong>has visited</strong> some villages. <span style="color:var(--ink-fade)">(recently)</span><br><br>
+          I <strong>have just seen</strong> my friends.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="teal-card" style="margin-bottom:1.5rem">
+    <div style="font-family:'Cinzel',serif;font-size:11px;font-weight:600;color:var(--teal-ink);margin-bottom:.4rem;letter-spacing:.06em">⚠️ IMPORTANT RULE</div>
+    <div style="font-size:14px;color:var(--teal-ink-mid)">Don't use the present perfect with specific past times like <strong>yesterday</strong>, <strong>last week</strong>, or <strong>in 2020</strong>. Use the simple past instead: "I <em>saw</em> a dragon yesterday."</div>
+  </div>
+  <button class="primary-btn" onclick="goSection(3)">Next: Adventure Time → ⚔️</button>`;}
+
+function renderExamples(){return`
+  <h2 class="sr-only">Adventure Time – Practice</h2>
+  <div style="margin-bottom:1.25rem">
+    <div class="section-heading">⚔️ Adventure Time</div>
+    <div class="section-sub">Practice "Have you ever…?" conversations</div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div style="font-family:'Cinzel',serif;font-size:12.5px;font-weight:600;color:var(--ink-black);margin-bottom:.85rem;letter-spacing:.03em">💬 Conversation Practice</div>
+    <div class="example-bubble bubble-q">🧒 Have you ever fought a dragon?</div>
+    <div class="example-bubble bubble-yes">✅ Yes, I have! I've fought three dragons!</div>
+    <div class="example-bubble bubble-q">🧒 Have you ever climbed a mountain?</div>
+    <div class="example-bubble bubble-no">❌ No, I haven't. I've never climbed a mountain.</div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div style="font-family:'Cinzel',serif;font-size:12.5px;font-weight:600;color:var(--ink-black);margin-bottom:.85rem;letter-spacing:.03em">🔍 Language Detective — Contractions</div>
+    <div class="grid3">
+      <div class="amber-card" style="text-align:center;padding:.9rem">
+        <div style="font-size:12px;color:var(--ink-fade);margin-bottom:.25rem">I have</div>
+        <div style="font-size:16px;color:var(--ink-mid)">=</div>
+        <div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-black)">I've</div>
+      </div>
+      <div class="amber-card" style="text-align:center;padding:.9rem">
+        <div style="font-size:12px;color:var(--ink-fade);margin-bottom:.25rem">she has</div>
+        <div style="font-size:16px;color:var(--ink-mid)">=</div>
+        <div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-black)">she's</div>
+      </div>
+      <div class="amber-card" style="text-align:center;padding:.9rem">
+        <div style="font-size:12px;color:var(--ink-fade);margin-bottom:.25rem">they have</div>
+        <div style="font-size:16px;color:var(--ink-mid)">=</div>
+        <div style="font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--ink-black)">they've</div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.5rem">
+    <div style="font-family:'Cinzel',serif;font-size:12.5px;font-weight:600;color:var(--ink-black);margin-bottom:.85rem;letter-spacing:.03em">🐉 Dragon Adventure Sentences</div>
+    ${[
+      ["Selene","has climbed","a mountain. ⛰️"],
+      ["Adil and Nazneen","have travelled","to another country. ✈️"],
+      ["Nadir","has walked","in a forest. 🌲"],
+      ["No one","has touched","an elephant! 🐘"]
+    ].map(([sub,v,rest])=>`
+    <div style="font-size:14px;padding:.45rem 0;border-bottom:1px solid rgba(160,120,50,0.25);color:var(--ink-dark)">
+      <span style="color:var(--ink-mid)">${sub} </span>
+      <span class="tag tag-amber">${v}</span>
+      <span style="color:var(--ink-mid)"> ${rest}</span>
+    </div>`).join("")}
+  </div>
+  <button class="primary-btn" onclick="goSection(4)">Enter the Dragon's Challenge → 🏆</button>`;}
+
+function renderQuiz(){
+  const q=questions[qIndex];
+  const pct=(qIndex/20)*100;
+  return`
+  <h2 class="sr-only">Dragon's Challenge Quiz</h2>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem">
+    <div style="font-family:'Cinzel',serif;font-size:11.5px;font-weight:600;color:var(--ink-fade);letter-spacing:.05em">Question ${qIndex+1} of 20</div>
+    <div style="font-family:'Cinzel',serif;font-size:12.5px;color:var(--ink-brown);font-weight:600">⭐ ${score} pts</div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+  <div class="dragon-banner" style="margin-bottom:1.25rem;padding:1.1rem 1.25rem 1rem">
+    <div style="font-size:15px;color:var(--ink-dark);line-height:1.65;margin-top:.25rem">${q.q}</div>
+  </div>
+  <div id="options">
+    ${q.opts.map((o,i)=>`
+      <button class="opt-btn ${selected===o?(confirmed?(o===q.ans?"correct":"wrong"):"selected"):""}"
+        onclick="selectOpt('${o.replace(/'/g,"\\'")}','${q.ans.replace(/'/g,"\\'")}','${q.exp.replace(/'/g,"\\'")}')"
+        ${confirmed?"disabled":""}>
+        <span style="color:var(--ink-faint);margin-right:9px;font-family:'Cinzel',serif;font-size:10.5px;letter-spacing:.06em">${String.fromCharCode(65+i)}.</span>${o}
+      </button>`).join("")}
+  </div>
+  ${confirmed?`<div class="exp-box">💡 ${q.exp}</div>`:""}
+  <div style="margin-top:1.25rem;display:flex;gap:.75rem">
+    ${!confirmed
+      ?`<button class="primary-btn" onclick="confirmAnswer()" ${selected?"":"disabled"}>Check Answer</button>`
+      :`<button class="primary-btn" onclick="nextQuestion()">${qIndex+1<20?"Next Question →":"See My Score 🏆"}</button>`}
+  </div>`;}
+
+function renderScore(){
+  const pct=Math.round((score/20)*100);
+  let msg,emoji;
+  if(score>=18){msg="Legendary Dragon Slayer!";emoji="🐉🏆"}
+  else if(score>=15){msg="Mighty Adventurer!";emoji="⚔️✨"}
+  else if(score>=12){msg="Brave Explorer!";emoji="🗺️🌟"}
+  else if(score>=8){msg="Keep Practising!";emoji="📚💪"}
+  else{msg="Don't Give Up!";emoji="🌱💫"}
+  return`
+  <h2 class="sr-only">Quiz Results</h2>
+  <div style="text-align:center;padding:1rem 0">
+    <div style="font-size:40px;margin-bottom:1rem">${emoji}</div>
+    <div class="score-ring">
+      <div class="score-big">${score}</div>
+      <div style="font-family:'Cinzel',serif;font-size:10px;color:var(--ink-fade);font-weight:600;letter-spacing:.08em">OUT OF 20</div>
+    </div>
+    <div style="font-family:'Cinzel',serif;font-size:17px;font-weight:600;color:var(--ink-black);margin-bottom:.4rem;letter-spacing:.04em">${msg}</div>
+    <div style="font-size:15px;color:var(--ink-mid);margin-bottom:1.5rem;font-style:italic">${pct}% correct</div>
+    <div class="amber-card" style="display:inline-block;margin:0 auto 1.5rem;padding:1rem 1.5rem;text-align:left;min-width:240px">
+      <div style="font-family:'Cinzel',serif;font-size:10px;color:var(--ink-fade);margin-bottom:.5rem;font-weight:600;letter-spacing:.09em">YOUR RESULT</div>
+      ${score>=18
+        ?`<div style="font-size:14px;color:var(--ink-dark);line-height:1.65">Excellent! You've mastered the present perfect. The dragon is impressed! 🐉</div>`
+        :score>=12
+        ?`<div style="font-size:14px;color:var(--ink-dark);line-height:1.65">Good work! Review the formula section and try again to beat the dragon!</div>`
+        :`<div style="font-size:14px;color:var(--ink-dark);line-height:1.65">Keep practising! Go back and review the Formula and When to Use sections.</div>`}
+    </div>
+    <div style="display:flex;gap:.75rem;justify-content:center">
+      <button class="primary-btn" onclick="retryQuiz()">Try Again 🔄</button>
+      <button class="ghost-btn" onclick="goSection(0)">Review Lesson</button>
+    </div>
+  </div>`;}
+
+function selectOpt(opt){if(confirmed)return;selected=opt;renderMain();}
+function confirmAnswer(){if(!selected)return;confirmed=true;if(selected===questions[qIndex].ans)score++;renderMain();}
+function nextQuestion(){if(qIndex+1>=20){quizDone=true;}else{qIndex++;selected=null;confirmed=false;}renderMain();}
+function retryQuiz(){resetQuiz();renderNav();renderMain();}
+
+resetQuiz();renderNav();renderMain();
+</script>
+</body>
+</html>
